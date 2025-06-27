@@ -38,7 +38,7 @@ namespace PryFakiani_IEFI
             return tabla;
         }
 
-        // ✅ Insertar auditoría y devolver el ID insertado
+        //  Insertar auditoría y devolver el ID insertado
         public int RegistrarAuditoria(ClsAuditoria auditoria)
         {
             using (SqlConnection conexion = new SqlConnection(cadenaConexion))
@@ -58,7 +58,7 @@ namespace PryFakiani_IEFI
             }
         }
 
-        // ✅ Actualizar por ID
+        //  Actualizar por ID
         public bool ActualizarTiempoDeUso(int idAuditoria, int tiempoEnSegundos)
         {
             using (SqlConnection conexion = new SqlConnection(cadenaConexion))

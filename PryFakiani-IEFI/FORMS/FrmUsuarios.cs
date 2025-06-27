@@ -6,16 +6,23 @@ namespace PryFakiani_IEFI
 {
     public partial class FrmUsuarios : Form
     {
+        // Objeto que maneja todas las operaciones de base de datos para usuarios
         private readonly clsUsuariosDatos usuariosDatos = new clsUsuariosDatos();
+
+        // Almacena el usuario seleccionado de la grilla
         private ClsUsuarios usuarioSeleccionado = null;
+
+        // Guarda el usuario que inició sesión
         private ClsUsuarios usuarioActual;
 
+        // Constructor que recibe el usuario logueado
         public FrmUsuarios(ClsUsuarios usuarioLogueado)
         {
             InitializeComponent();
             usuarioActual = usuarioLogueado;
         }
 
+       
         private void FrmUsuarios_Load(object sender, EventArgs e)
         {
             CargarUsuarios();
@@ -25,11 +32,13 @@ namespace PryFakiani_IEFI
             dataUsuarios.CellClick += dataUsuarios_CellClick;
         }
 
+        
         private void CargarUsuarios()
         {
             dataUsuarios.DataSource = usuariosDatos.ObtenerUsuarios();
         }
 
+       
         private void CargarAreas()
         {
             cmbArea.Items.Clear();
@@ -42,12 +51,14 @@ namespace PryFakiani_IEFI
             });
         }
 
+        
         private void ConfigurarStatusStrip()
         {
             lblNombreUsuario.Text = $"Usuario: {usuarioActual.Nombre} {usuarioActual.Apellido}";
             lblNiveldeUsuario.Text = $"Nivel: {(usuarioActual.Nivel == 1 ? "Administrador,1" : "Usuario común,0")}";
         }
 
+        // Habilita o deshabilita botones según el nivel del usuario
         private void ControlarAccesoPorNivel()
         {
             bool esAdmin = usuarioActual.Nivel == 1;
@@ -57,6 +68,7 @@ namespace PryFakiani_IEFI
             btnActualizar.Enabled = esAdmin;
         }
 
+        
         private void LimpiarCampos()
         {
             txtLogin.Clear();
@@ -70,6 +82,7 @@ namespace PryFakiani_IEFI
             usuarioSeleccionado = null;
         }
 
+        
         private bool ValidarCamposObligatorios()
         {
             if (string.IsNullOrWhiteSpace(txtLogin.Text) ||
@@ -86,18 +99,21 @@ namespace PryFakiani_IEFI
             return true;
         }
 
+        // Verifica si ya existe un usuario con el mismo login
         private bool LoginExiste(string login)
         {
             DataTable dt = usuariosDatos.BuscarUsuarioPorLogin(login);
             return dt.Rows.Count > 0;
         }
 
+        //  para buscar usuarios por login
         private void btnBuscar_Click(object sender, EventArgs e)
         {
             string textoBusqueda = txtBusqueda.Text.Trim();
             dataUsuarios.DataSource = usuariosDatos.BuscarUsuarioPorLogin(textoBusqueda);
         }
 
+       
         private void btnNuevo_Click(object sender, EventArgs e)
         {
             if (!ValidarCamposObligatorios()) return;
@@ -121,7 +137,7 @@ namespace PryFakiani_IEFI
                 FechaNacimiento = dataNacimiento.Value,
                 Celular = txtCelular.Text.Trim(),
                 Nivel = 0,
-                DNI = txtDNI.Text.Trim() // Asegúrate de que txtDNI esté definido en tu formulario
+                DNI = txtDNI.Text.Trim()
             };
 
             if (usuariosDatos.AgregarUsuario(nuevo))
@@ -136,6 +152,7 @@ namespace PryFakiani_IEFI
             }
         }
 
+        
         private void btnActualizar_Click(object sender, EventArgs e)
         {
             if (usuarioSeleccionado == null)
@@ -152,7 +169,7 @@ namespace PryFakiani_IEFI
             usuarioSeleccionado.area = cmbArea.Text;
             usuarioSeleccionado.Contraseña = txtContraseña.Text.Trim();
             usuarioSeleccionado.FechaNacimiento = dataNacimiento.Value;
-            usuarioSeleccionado.DNI = txtDNI.Text.Trim(); // Asegúrate de que txtDNI esté definido en tu formulario
+            usuarioSeleccionado.DNI = txtDNI.Text.Trim();
             usuarioSeleccionado.Celular = txtCelular.Text.Trim();
 
             if (usuariosDatos.ActualizarUsuario(usuarioSeleccionado))
@@ -167,11 +184,18 @@ namespace PryFakiani_IEFI
             }
         }
 
+        
         private void btnEliminar_Click(object sender, EventArgs e)
         {
             if (usuarioSeleccionado == null)
             {
                 MessageBox.Show("Seleccione un usuario para eliminar.");
+                return;
+            }
+
+            if (usuarioSeleccionado.Login.ToLower() == "admin")
+            {
+                MessageBox.Show("No se puede eliminar el usuario administrador.", "Operación no permitida", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -187,6 +211,7 @@ namespace PryFakiani_IEFI
             }
         }
 
+        //  se activa al hacer clic en una celda de la grilla
         private void dataUsuarios_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
@@ -205,7 +230,8 @@ namespace PryFakiani_IEFI
                     Contraseña = fila.Cells["Contraseña"].Value?.ToString(),
                     FechaNacimiento = Convert.ToDateTime(fila.Cells["FechaNacimiento"].Value),
                     Celular = fila.Cells["Celular"].Value?.ToString(),
-                    Nivel = Convert.ToInt32(fila.Cells["Nivel"].Value)
+                    Nivel = Convert.ToInt32(fila.Cells["Nivel"].Value),
+                    DNI = fila.Cells["DNI"].Value?.ToString()
                 };
 
                 txtLogin.Text = usuarioSeleccionado.Login;
@@ -214,24 +240,26 @@ namespace PryFakiani_IEFI
                 cmbArea.Text = usuarioSeleccionado.area;
                 txtContraseña.Text = usuarioSeleccionado.Contraseña;
                 dataNacimiento.Value = usuarioSeleccionado.FechaNacimiento;
-                txtDNI.Text = usuarioSeleccionado.DNI; // Asegúrate de que txtDNI esté definido en tu formulario
+                txtDNI.Text = usuarioSeleccionado.DNI;
                 txtCelular.Text = usuarioSeleccionado.Celular;
             }
         }
 
+       
         private void btnModificar_Click(object sender, EventArgs e)
         {
             btnActualizar.PerformClick();
         }
 
+        // Botón volver cierra el formulario no puse el btn 
         private void btnVolver_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
+        
         private void txtDNI_TextChanged(object sender, EventArgs e)
         {
-
         }
     }
 }

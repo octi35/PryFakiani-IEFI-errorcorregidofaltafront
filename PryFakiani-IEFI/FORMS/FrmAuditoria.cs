@@ -9,33 +9,51 @@ namespace PryFakiani_IEFI
 {
     public partial class FrmAuditoria : Form
     {
+        //  Clase de acceso a datos de auditoría 
         private readonly ClsAuditoriaDatos auditoriaDatos = new ClsAuditoriaDatos();
+
+        //  Tabla para almacenar los resultados de la auditoría
         private DataTable tablaAuditoria;
+
+        // arranca logica para el tiempo de uso 
+        //  Cronómetro para medir tiempo de uso
         private Stopwatch cronometro = new Stopwatch();
+
+        //  Timer que actualiza el cronómetro cada segundo
         private Timer timerUso = new Timer();
+
+       
         private string loginUsuario;
 
+        //  Objeto con los datos actuales de auditoría
         private ClsAuditoria auditoriaActual = new ClsAuditoria();
+
+       
         private int segundosTotales = 0;
 
+        //  Constructor del formulario, recibe el login del usuario
         public FrmAuditoria(string login)
         {
             InitializeComponent();
             this.FormClosing += FrmAuditoria_FormClosing;
 
-            timerUso.Interval = 1000;
+            timerUso.Interval = 1000; // 1 segundo
             timerUso.Tick += TimerUso_Tick;
+
             loginUsuario = login;
         }
 
+       
         private void FrmAuditoria_Load(object sender, EventArgs e)
         {
-            CargarDatos();
+            CargarDatos(); 
+
             lblUsuarioAuditoria.Text = $"Usuario: {loginUsuario}";
 
             var clsUsuarioDatos = new clsUsuariosDatos();
             var usuario = clsUsuarioDatos.ObtenerUsuarioPorLogin(loginUsuario);
 
+            //  Crear objeto de auditoría  ------- directamete lo creo aca
             auditoriaActual = new ClsAuditoria
             {
                 Fecha = DateTime.Now,
@@ -44,13 +62,14 @@ namespace PryFakiani_IEFI
                 NombreUsuario = $"{usuario.Nombre} {usuario.Apellido}"
             };
 
-            // Guardamos el ID del registro insertado
+            //  Insertar auditoría y guardar ID generado
             auditoriaActual.IdAuditoria = auditoriaDatos.RegistrarAuditoria(auditoriaActual);
 
             cronometro.Start();
             timerUso.Start();
         }
 
+        //  Cada segundo, incrementa el contador y actualiza el tiempo mostrado
         private void TimerUso_Tick(object sender, EventArgs e)
         {
             segundosTotales++;
@@ -58,6 +77,7 @@ namespace PryFakiani_IEFI
             lblTiempodeUso.Text = $"Tiempo de uso: {tiempo:hh\\:mm\\:ss}";
         }
 
+        //  Al cerrar el formulario, detiene los contadores y guarda el tiempo
         private void FrmAuditoria_FormClosing(object sender, FormClosingEventArgs e)
         {
             cronometro.Stop();
@@ -66,12 +86,13 @@ namespace PryFakiani_IEFI
             auditoriaDatos.ActualizarTiempoDeUso(auditoriaActual.IdAuditoria, segundosTotales);
         }
 
+       
         private void CargarDatos()
         {
             try
             {
                 tablaAuditoria = auditoriaDatos.ObtenerAuditoriasConUsuarios();
-                AplicarFiltros();
+                AplicarFiltros(); 
             }
             catch (Exception ex)
             {
@@ -79,24 +100,25 @@ namespace PryFakiani_IEFI
             }
         }
 
+       
         private void AplicarFiltros()
         {
             if (tablaAuditoria == null) return;
 
             string filtro = "";
 
-            // Filtro por ID de auditoría
+            //  ID de auditoría
             if (chkfiltrarAuditoriaId.Checked && !string.IsNullOrWhiteSpace(txtAuditoriaId.Text))
                 filtro += $"Convert(IdAuditoria, 'System.String') LIKE '%{txtAuditoriaId.Text.Trim()}%'";
 
-            // Filtro por nombre de usuario
+            //   nombre de usuario
             if (chkUsuarioNombre.Checked && !string.IsNullOrWhiteSpace(txtUsuarioNombre.Text))
             {
                 if (!string.IsNullOrEmpty(filtro)) filtro += " AND ";
                 filtro += $"NombreUsuario LIKE '%{txtUsuarioNombre.Text.Trim()}%'";
             }
 
-            // Filtro por fecha (AGREGÁ ESTO)
+            // fecha
             if (chkFiltroFecha.Checked)
             {
                 string desde = dateDesde.Value.ToString("yyyy-MM-dd");
@@ -106,7 +128,7 @@ namespace PryFakiani_IEFI
                 filtro += $"Fecha >= '{desde}' AND Fecha <= '{hasta}'";
             }
 
-            // Aplicar al DataView
+            
             DataView vista = tablaAuditoria.DefaultView;
             vista.RowFilter = filtro;
 
@@ -116,8 +138,7 @@ namespace PryFakiani_IEFI
             dgvUsuarios.DataSource = vista;
         }
 
-
-
+        
         private void btnDescargar_Click(object sender, EventArgs e)
         {
             if (dgvUsuarios.Rows.Count == 0)
@@ -137,6 +158,7 @@ namespace PryFakiani_IEFI
                     {
                         using (StreamWriter writer = new StreamWriter(saveDialog.FileName))
                         {
+                            //  Escribir encabezados
                             for (int i = 0; i < dgvUsuarios.Columns.Count; i++)
                             {
                                 writer.Write(dgvUsuarios.Columns[i].HeaderText);
@@ -144,6 +166,7 @@ namespace PryFakiani_IEFI
                             }
                             writer.WriteLine();
 
+                            //  Escribir contenido fila por fila
                             foreach (DataGridViewRow fila in dgvUsuarios.Rows)
                             {
                                 if (!fila.IsNewRow)
@@ -168,6 +191,8 @@ namespace PryFakiani_IEFI
                 }
             }
         }
+
+        //  Exportar datos filtrados a Excel 
         private void btnExcel_Click(object sender, EventArgs e)
         {
             if (dgvUsuarios.Rows.Count == 0)
@@ -189,13 +214,13 @@ namespace PryFakiani_IEFI
                         {
                             var worksheet = workbook.Worksheets.Add("Auditorias");
 
-                            // Escribir encabezados
+                            //  Escribir encabezados
                             for (int i = 0; i < dgvUsuarios.Columns.Count; i++)
                             {
                                 worksheet.Cell(1, i + 1).Value = dgvUsuarios.Columns[i].HeaderText;
                             }
 
-                            // Escribir datos fila por fila
+                            //  Escribir celdas
                             for (int i = 0; i < dgvUsuarios.Rows.Count; i++)
                             {
                                 for (int j = 0; j < dgvUsuarios.Columns.Count; j++)
@@ -217,52 +242,18 @@ namespace PryFakiani_IEFI
             }
         }
 
-        private void radioASC_CheckedChanged(object sender, EventArgs e)
-        {
-            AplicarFiltros();
-        }
+        //  Eventos para disparar los filtros al cambiar opciones // filtros rapidos con lambda
+        private void radioASC_CheckedChanged(object sender, EventArgs e) => AplicarFiltros();
+        private void RadioDesc_CheckedChanged(object sender, EventArgs e) => AplicarFiltros();
+        private void chkUsuarioNombre_CheckedChanged(object sender, EventArgs e) => AplicarFiltros();
+        private void txtUsuarioNombre_TextChanged(object sender, EventArgs e) => AplicarFiltros();
+        private void chkfiltrarAuditoriaId_CheckedChanged(object sender, EventArgs e) => AplicarFiltros();
+        private void txtAuditoriaId_TextChanged(object sender, EventArgs e) => AplicarFiltros();
+        private void chkFiltroFecha_CheckedChanged(object sender, EventArgs e) => AplicarFiltros();
+        private void dateDesde_ValueChanged(object sender, EventArgs e) => AplicarFiltros();
+        private void dateHasta_ValueChanged(object sender, EventArgs e) => AplicarFiltros();
 
-        private void RadioDesc_CheckedChanged(object sender, EventArgs e)
-        {
-            AplicarFiltros();
-        }
-
-        private void chkUsuarioNombre_CheckedChanged(object sender, EventArgs e)
-        {
-            AplicarFiltros();
-        }
-
-        private void txtUsuarioNombre_TextChanged(object sender, EventArgs e)
-        {
-            AplicarFiltros();
-        }
-
-        private void chkfiltrarAuditoriaId_CheckedChanged(object sender, EventArgs e)
-        {
-            AplicarFiltros();
-        }
-
-        private void txtAuditoriaId_TextChanged(object sender, EventArgs e)
-        {
-            AplicarFiltros();
-        }
-
-        private void chkFiltroFecha_CheckedChanged(object sender, EventArgs e)
-        {
-            AplicarFiltros();
-        }
-
-        private void dateDesde_ValueChanged(object sender, EventArgs e)
-        {
-            AplicarFiltros();
-        }
-
-        private void dateHasta_ValueChanged(object sender, EventArgs e)
-        {
-            AplicarFiltros();
-        }
-
-
+        //  Botón para recargar auditorías desde la base
         private void BtnActualizar_Click(object sender, EventArgs e)
         {
             CargarDatos();

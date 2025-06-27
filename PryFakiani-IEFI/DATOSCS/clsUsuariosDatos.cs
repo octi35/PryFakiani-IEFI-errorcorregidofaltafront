@@ -6,8 +6,10 @@ namespace PryFakiani_IEFI
 {
     public class clsUsuariosDatos
     {
+        //  Instancia de conexión centralizada
         private readonly clsConexion conexionBD = new clsConexion();
 
+        //  Insertar un nuevo usuario en la base de datos
         public bool AgregarUsuario(ClsUsuarios usuario)
         {
             using (SqlConnection conexion = conexionBD.ObtenerConexion())
@@ -15,7 +17,7 @@ namespace PryFakiani_IEFI
                 string query = @"INSERT INTO Usuarios 
                                 (Login, Nombre, Apellido, Descripcion, FechaRegistro, Area, Contraseña, FechaNacimiento, Celular, Nivel, DNI)
                                  VALUES 
-                                (@Login, @Nombre, @Apellido, @Descripcion, @FechaRegistro, @Area, @Contraseña, @FechaNacimiento, @Celular, @Nivel,@DNI )";
+                                (@Login, @Nombre, @Apellido, @Descripcion, @FechaRegistro, @Area, @Contraseña, @FechaNacimiento, @Celular, @Nivel, @DNI)";
 
                 SqlCommand cmd = new SqlCommand(query, conexion);
 
@@ -36,6 +38,7 @@ namespace PryFakiani_IEFI
             }
         }
 
+        
         public DataTable ObtenerUsuarios()
         {
             using (SqlConnection conexion = conexionBD.ObtenerConexion())
@@ -48,6 +51,7 @@ namespace PryFakiani_IEFI
             }
         }
 
+        //  Buscar usuarios filtrando por login (LIKE)
         public DataTable BuscarUsuarioPorLogin(string login)
         {
             using (SqlConnection conexion = conexionBD.ObtenerConexion())
@@ -61,6 +65,7 @@ namespace PryFakiani_IEFI
             }
         }
 
+        //  Actualizar datos de un usuario existente
         public bool ActualizarUsuario(ClsUsuarios usuario)
         {
             using (SqlConnection conexion = conexionBD.ObtenerConexion())
@@ -99,19 +104,33 @@ namespace PryFakiani_IEFI
             }
         }
 
+       
+        //  Eliminar un usuario y su historial de auditoría salvo si es el admin
         public bool EliminarUsuario(int idUsuario)
         {
             using (SqlConnection conexion = conexionBD.ObtenerConexion())
             {
                 conexion.Open();
 
-                // Primero borra las auditorías relacionadas
+                //  Primero verificamos si el usuario es "admin"
+                string consultaLogin = "SELECT Login FROM Usuarios WHERE IdUsuarios = @IdUsuarios";
+                SqlCommand cmdLogin = new SqlCommand(consultaLogin, conexion);
+                cmdLogin.Parameters.AddWithValue("@IdUsuarios", idUsuario);
+
+                object resultado = cmdLogin.ExecuteScalar();
+                if (resultado != null && resultado.ToString().ToLower() == "admin")
+                {
+                    //  No se permite eliminar al usuario admin
+                    return false;
+                }
+
+                //  Borrar primero las auditorías vinculadas
                 string queryAuditoria = "DELETE FROM Auditoria WHERE IdUsuarios = @IdUsuarios";
                 SqlCommand cmdAuditoria = new SqlCommand(queryAuditoria, conexion);
                 cmdAuditoria.Parameters.AddWithValue("@IdUsuarios", idUsuario);
                 cmdAuditoria.ExecuteNonQuery();
 
-                // Ahora sí puede borrar el usuario
+                //  Luego borrar el usuario
                 string queryUsuario = "DELETE FROM Usuarios WHERE IdUsuarios = @IdUsuarios";
                 SqlCommand cmdUsuario = new SqlCommand(queryUsuario, conexion);
                 cmdUsuario.Parameters.AddWithValue("@IdUsuarios", idUsuario);
@@ -119,6 +138,8 @@ namespace PryFakiani_IEFI
             }
         }
 
+
+        //  Validar usuario 
         public bool ValidarLogin(string login, string password)
         {
             using (SqlConnection conexion = conexionBD.ObtenerConexion())
@@ -134,6 +155,8 @@ namespace PryFakiani_IEFI
             }
         }
 
+        //vacio por ahora 
+        //  Obtener nivel de acceso de un usuario // por si llegamos con tareas y los hago acceder a los usuarios
         public int ObtenerNivelUsuario(string login, string password)
         {
             using (SqlConnection conexion = conexionBD.ObtenerConexion())
@@ -149,9 +172,7 @@ namespace PryFakiani_IEFI
             }
         }
 
-
-
-        //metodo tiempo 
+        //  Obtener todos los datos de un usuario a partir del login
         public ClsUsuarios ObtenerUsuarioPorLogin(string login)
         {
             using (SqlConnection conexion = conexionBD.ObtenerConexion())
@@ -162,6 +183,7 @@ namespace PryFakiani_IEFI
 
                 conexion.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
+
                 if (reader.Read())
                 {
                     return new ClsUsuarios
@@ -174,22 +196,15 @@ namespace PryFakiani_IEFI
                         FechaRegistro = Convert.ToDateTime(reader["FechaRegistro"]),
                         area = reader["Area"] != DBNull.Value ? reader["Area"].ToString() : "Sin Área",
                         Contraseña = reader["Contraseña"].ToString(),
-                        FechaNacimiento = reader["FechaNacimiento"] != DBNull.Value
-                            ? Convert.ToDateTime(reader["FechaNacimiento"])
-                            : DateTime.MinValue,
+                        FechaNacimiento = reader["FechaNacimiento"] != DBNull.Value ? Convert.ToDateTime(reader["FechaNacimiento"]) : DateTime.MinValue,
                         Celular = reader["Celular"] != DBNull.Value ? reader["Celular"].ToString() : "Sin celular",
                         Nivel = reader["Nivel"] != DBNull.Value ? Convert.ToInt32(reader["Nivel"]) : 0,
                         DNI = reader["DNI"] != DBNull.Value ? reader["DNI"].ToString() : "Sin DNI"
                     };
                 }
+
                 return null;
             }
         }
-
-
-
-
     }
-
-
 }

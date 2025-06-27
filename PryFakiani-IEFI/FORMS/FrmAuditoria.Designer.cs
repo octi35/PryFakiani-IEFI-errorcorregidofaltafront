@@ -280,7 +280,7 @@
             // 
             this.btnExcel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(174)))), ((int)(((byte)(251)))));
             this.btnExcel.Font = new System.Drawing.Font("Cooper Black", 9F);
-            this.btnExcel.Image = global::PryFakiani_IEFI.Properties.Resources.buscar_alt__1_;
+            this.btnExcel.Image = global::PryFakiani_IEFI.Properties.Resources.buscar_alt;
             this.btnExcel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnExcel.Location = new System.Drawing.Point(762, 350);
             this.btnExcel.Margin = new System.Windows.Forms.Padding(4);
@@ -310,7 +310,7 @@
             // 
             this.btnDescargar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(174)))), ((int)(((byte)(251)))));
             this.btnDescargar.Font = new System.Drawing.Font("Cooper Black", 9F);
-            this.btnDescargar.Image = global::PryFakiani_IEFI.Properties.Resources.buscar_alt__1_;
+            this.btnDescargar.Image = global::PryFakiani_IEFI.Properties.Resources.buscar_alt;
             this.btnDescargar.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnDescargar.Location = new System.Drawing.Point(532, 350);
             this.btnDescargar.Margin = new System.Windows.Forms.Padding(4);
