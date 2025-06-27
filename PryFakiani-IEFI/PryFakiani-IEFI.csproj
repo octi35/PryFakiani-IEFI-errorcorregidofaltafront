@@ -220,6 +220,7 @@
     <None Include="Resources\usuario.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\actualizar1.png" />
     <Content Include="Resources\globo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

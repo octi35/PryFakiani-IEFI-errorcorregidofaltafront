@@ -42,13 +42,13 @@
             this.lblTiempouso = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblUsuarioAuditoria = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
             this.dateDesde = new System.Windows.Forms.DateTimePicker();
             this.dateHasta = new System.Windows.Forms.DateTimePicker();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.chkFiltroFecha = new System.Windows.Forms.CheckBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.btnExcel = new System.Windows.Forms.Button();
             this.BtnActualizar = new System.Windows.Forms.Button();
             this.btnDescargar = new System.Windows.Forms.Button();
@@ -192,20 +192,6 @@
             this.panel1.Size = new System.Drawing.Size(1022, 58);
             this.panel1.TabIndex = 16;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Cooper Black", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Image = ((System.Drawing.Image)(resources.GetObject("label1.Image")));
-            this.label1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.label1.Location = new System.Drawing.Point(410, 9);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(296, 38);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "AUDITORIAS      ";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // dateDesde
             // 
             this.dateDesde.Format = System.Windows.Forms.DateTimePickerFormat.Short;
@@ -276,11 +262,25 @@
             this.panel2.Size = new System.Drawing.Size(276, 499);
             this.panel2.TabIndex = 23;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Cooper Black", 19.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Image = global::PryFakiani_IEFI.Properties.Resources.ajustes_deslizadores;
+            this.label1.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label1.Location = new System.Drawing.Point(410, 9);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(296, 38);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "AUDITORIAS      ";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // btnExcel
             // 
             this.btnExcel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(174)))), ((int)(((byte)(251)))));
             this.btnExcel.Font = new System.Drawing.Font("Cooper Black", 9F);
-            this.btnExcel.Image = ((System.Drawing.Image)(resources.GetObject("btnExcel.Image")));
+            this.btnExcel.Image = global::PryFakiani_IEFI.Properties.Resources.buscar_alt__1_;
             this.btnExcel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnExcel.Location = new System.Drawing.Point(762, 350);
             this.btnExcel.Margin = new System.Windows.Forms.Padding(4);
@@ -295,7 +295,7 @@
             // 
             this.BtnActualizar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(174)))), ((int)(((byte)(251)))));
             this.BtnActualizar.Font = new System.Drawing.Font("Cooper Black", 9F);
-            this.BtnActualizar.Image = ((System.Drawing.Image)(resources.GetObject("BtnActualizar.Image")));
+            this.BtnActualizar.Image = global::PryFakiani_IEFI.Properties.Resources.actualizar;
             this.BtnActualizar.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.BtnActualizar.Location = new System.Drawing.Point(283, 350);
             this.BtnActualizar.Margin = new System.Windows.Forms.Padding(4);
@@ -310,7 +310,7 @@
             // 
             this.btnDescargar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(135)))), ((int)(((byte)(174)))), ((int)(((byte)(251)))));
             this.btnDescargar.Font = new System.Drawing.Font("Cooper Black", 9F);
-            this.btnDescargar.Image = ((System.Drawing.Image)(resources.GetObject("btnDescargar.Image")));
+            this.btnDescargar.Image = global::PryFakiani_IEFI.Properties.Resources.buscar_alt__1_;
             this.btnDescargar.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnDescargar.Location = new System.Drawing.Point(532, 350);
             this.btnDescargar.Margin = new System.Windows.Forms.Padding(4);
